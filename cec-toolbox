@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+SCRIPT_NAME="cec-toolbox"
+DEVICE_NAME="PC"
+EXE="cec-ctl -snt0"
+COMMAND=$1
+
+function configure_playback() {
+    $EXE --playback -o "$1"
+}
+
+function get_physical_address() {
+    $EXE -x
+}
+
+function switch_input() {
+    if [[ -z "$1" ]]; then
+        return 1
+    fi
+    $EXE --active-source phys-addr="$1"
+}
+
+function tv_on() {
+    switch_input "$(get_physical_address)"
+    $EXE --image-view-on
+}
+
+function tv_off() {
+    $EXE --standby
+}
+
+configure_playback "$DEVICE_NAME"
+case "$COMMAND" in
+    "on")
+        tv_on
+        ;;
+    "off")
+        tv_off
+        ;;
+esac
