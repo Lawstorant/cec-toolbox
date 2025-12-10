@@ -11,9 +11,8 @@ disable-services:
 
 install:
 	install -Dm755 cec-toolbox /usr/bin/cec-toolbox
-	install -Dm644 cec-toolbox-suspend.service /usr/lib/systemd/system/cec-toolbox-suspend.service
-	install -Dm644 cec-toolbox-poweroff.service /usr/lib/systemd/system/cec-toolbox-poweroff.service
-	install -Dm644 cec-toolbox-wakeup.service /usr/lib/systemd/system/cec-toolbox-wakeup.service
+	install -Dm644 systemd/*.service /usr/lib/systemd/system/
+
 
 remove: disable-services
 	rm /usr/bin/cec-toolbox || true
