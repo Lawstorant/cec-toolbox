@@ -5,32 +5,34 @@ DEVICE_NAME="PC"
 EXE="cec-ctl -st0"
 COMMAND=$1
 
-function configure_playback() {
+configure_playback() {
     $EXE --playback -o "$1"
 }
 
-function get_physical_address() {
+get_physical_address() {
     $EXE -x
 }
 
-function switch_input() {
-    if [[ -z "$1" ]]; then
-        return 1
-    fi
+switch_input() {
+    [[ -z "$1" ]] && return 1
     $EXE --active-source phys-addr="$1"
 }
 
-function tv_on() {
-    switch_input "$(get_physical_address)"
-    $EXE --image-view-on
+get_tv_state() {
+    $EXE --give-device-power-status | grep -c "pwr-state: on"
 }
 
-function tv_off() {
-    $EXE --standby
+tv_on() {
+    [[ "$(get_tv_state)" -eq 0 ]] && $EXE --image-view-on
+    switch_input "$(get_physical_address)"
+}
+
+tv_off() {
+    [[ "$(get_tv_state)" -ne 0 ]] && $EXE --standby
 }
 
 configure_playback "$DEVICE_NAME"
-sleep .5s
+sleep .2s
 case "$COMMAND" in
     "on")
         tv_on
