@@ -7,6 +7,7 @@ COMMAND=$1
 
 configure_playback() {
     $EXE --playback -o "$1"
+    sleep .2s
 }
 
 get_physical_address() {
@@ -23,16 +24,16 @@ get_tv_state() {
 }
 
 tv_on() {
+    configure_playback "$DEVICE_NAME"
     [[ "$(get_tv_state)" -eq 0 ]] && $EXE --image-view-on
     switch_input "$(get_physical_address)"
 }
 
 tv_off() {
+    configure_playback "$DEVICE_NAME"
     [[ "$(get_tv_state)" -ne 0 ]] && $EXE --standby
 }
 
-configure_playback "$DEVICE_NAME"
-sleep .2s
 case "$COMMAND" in
     "on")
         tv_on
@@ -49,7 +50,10 @@ case "$COMMAND" in
     "address")
         get_physical_address
         ;;
-    .*)
+    "configure")
+        configure_playback "$DEVICE_NAME"
+        ;;
+    *)
         echo "Unknwon command: $COMMAND"
         ;;
 esac
