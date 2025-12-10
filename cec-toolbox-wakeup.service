@@ -1,5 +1,6 @@
 [Unit]
 Description=Turn the TV on when waking up/turning on the PC
+After=suspend.target
 
 [Service]
 Type=oneshot
