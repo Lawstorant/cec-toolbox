@@ -53,6 +53,10 @@ case "$COMMAND" in
     "configure")
         configure_playback "$DEVICE_NAME"
         ;;
+    "notice-me")
+        configure_playback "$DEVICE_NAME"
+        switch_input "$(get_physical_address)"
+        ;;
     *)
         echo "Unknwon command: $COMMAND"
         ;;
