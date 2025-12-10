@@ -1,0 +1,11 @@
+[Unit]
+Description=Turn the TV off when putting PC to sleep
+Before=sleep.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/usr/bin/cec-toolbox off
+
+[Install]
+WantedBy=sleep.target
