@@ -49,4 +49,7 @@ case "$COMMAND" in
     "address")
         get_physical_address
         ;;
+    .*)
+        echo "Unknwon command: $COMMAND"
+        ;;
 esac
