@@ -1,5 +1,5 @@
 [Unit]
-Description=Turn the TV off when going to sleep/turning off PC
+Description=Turn the TV on when waking up/turning on the PC
 
 [Service]
 Type=oneshot

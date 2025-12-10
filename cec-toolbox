@@ -2,7 +2,7 @@
 
 SCRIPT_NAME="cec-toolbox"
 DEVICE_NAME="PC"
-EXE="cec-ctl -snt0"
+EXE="cec-ctl -st0"
 COMMAND=$1
 
 function configure_playback() {
@@ -30,6 +30,7 @@ function tv_off() {
 }
 
 configure_playback "$DEVICE_NAME"
+sleep .5s
 case "$COMMAND" in
     "on")
         tv_on
