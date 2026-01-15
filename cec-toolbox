@@ -57,6 +57,9 @@ case "$COMMAND" in
         configure_playback "$DEVICE_NAME"
         switch_input "$(get_physical_address)"
         ;;
+    "daemon")
+        python3 daemon/cec-daemon.py
+        ;;
     *)
         echo "Unknwon command: $COMMAND"
         ;;
