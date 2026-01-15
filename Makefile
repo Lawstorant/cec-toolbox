@@ -1,9 +1,11 @@
 enable-services:
 	systemctl daemon-reload
-	systemctl reenable cec-toolbox-input --now
+	systemctl reenable cec-toolbox-input
 	systemctl reenable cec-toolbox-wakeup
 	systemctl reenable cec-toolbox-suspend
 	systemctl reenable cec-toolbox-poweroff
+
+	systemctl start cec-toolbox-input
 
 disable-services:
 	systemctl disable cec-toolbox-input || true
