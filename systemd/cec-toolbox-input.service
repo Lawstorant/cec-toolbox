@@ -1,0 +1,11 @@
+[Unit]
+Description=Handle CEC input translation
+After=multi-user.target
+
+[Service]
+Type=simple
+RemainAfterExit=no
+ExecStart=/usr/bin/env python3 /usr/share/cec-toolbox/input-daemon/main.py
+
+[Install]
+WantedBy=multi-user.target

@@ -58,7 +58,7 @@ case "$COMMAND" in
         switch_input "$(get_physical_address)"
         ;;
     "daemon")
-        python3 daemon/cec-daemon.py
+        python3 input-daemon || python3 /usr/share/cec-toolbox/input-daemon
         ;;
     *)
         echo "Unknwon command: $COMMAND"
