@@ -2,12 +2,14 @@
 
 ### Dependencies:
 - cec-ctl
+- python3
+- python-evdev
 
 ### Installation
 ```shell
 sudo make install
 sudo make enable-services
-# or 
+# or
 sudo make install-and-enable
 ```
 
@@ -36,6 +38,9 @@ cec-toolbox input 3
 # configure as playback device
 # (done automatically for on/off commands)
 cec-toolbox configure
+
+# run input daemon manually (systemd service preferred)
+cec-toolbox daemon
 ```
 
 ### Arch Linux
