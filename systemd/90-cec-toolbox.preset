@@ -1,4 +1,5 @@
 enable cec-toolbox-input.service
 enable cec-toolbox-poweroff.service
 enable cec-toolbox-suspend.service
+enable cec-toolbox-mouse-wake.service
 enable cec-toolbox-wakeup.service
