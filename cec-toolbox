@@ -67,8 +67,14 @@ case "$COMMAND" in
         configure_playback "$DEVICE_NAME"
         switch_input "$(get_physical_address)"
         ;;
+    "state")
+        get_tv_state
+        ;;
     "daemon")
         python3 input-daemon || python3 /usr/share/cec-toolbox/input-daemon
+        ;;
+    "mouse-wake")
+        python3 mouse-wake || python3 /usr/share/cec-toolbox/mouse-wake
         ;;
     *)
         echo "Unknwon command: $COMMAND"
