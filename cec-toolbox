@@ -2,6 +2,12 @@
 
 # SCRIPT_NAME="cec-toolbox"
 DEVICE_NAME="PC"
+CONFIG_PATH="/etc/cec-toolbox.conf"
+if [[ -f $CONFIG_PATH ]]; then
+    # shellcheck source=/etc/cec-toolbox.conf
+    . $CONFIG_PATH
+fi
+CONFIG_PATH="/etc/cec-toolbox.conf"
 EXE="cec-ctl -st0"
 COMMAND=$1
 
@@ -12,6 +18,15 @@ configure_playback() {
 
 get_physical_address() {
     $EXE -x
+}
+
+get_address() {
+    if [[ $CUSTOM_ADDRESS =~ [0-9].[0-9].[0-9].[0-9] ]]; then
+        echo "$CUSTOM_ADDRESS"
+        return
+    fi
+
+    get_physical_address
 }
 
 switch_input() {
@@ -26,7 +41,7 @@ get_tv_state() {
 tv_on() {
     configure_playback "$DEVICE_NAME"
     [[ "$(get_tv_state)" -eq 0 ]] && $EXE --image-view-on
-    switch_input "$(get_physical_address)"
+    switch_input "$(get_address)"
 }
 
 tv_off() {
@@ -39,6 +54,15 @@ poweroff() {
         grep -e 'reboot.target.*start' &&
         echo "Rebooting, skip TV standby" ||
         tv_off
+}
+
+write_config() {
+    [[ $1 == "address" ]] && CUSTOM_ADDRESS="$2"
+    [[ $1 == "name" ]] && DEVICE_NAME="$2"
+
+    echo "# Values are optional" > "$CONFIG_PATH"
+    echo "CUSTOM_ADDRESS=$CUSTOM_ADDRESS" >> "$CONFIG_PATH"
+    echo "DEVICE_NAME=$DEVICE_NAME" >> "$CONFIG_PATH"
 }
 
 case "$COMMAND" in
@@ -58,6 +82,9 @@ case "$COMMAND" in
         get_physical_address | cut -d "." -f 1
         ;;
     "address")
+        get_address
+        ;;
+    "physical-address")
         get_physical_address
         ;;
     "configure")
@@ -65,7 +92,16 @@ case "$COMMAND" in
         ;;
     "notice-me")
         configure_playback "$DEVICE_NAME"
-        switch_input "$(get_physical_address)"
+        switch_input "$(get_address)"
+        ;;
+    "set-custom-address")
+        write_config "address" "$2"
+        ;;
+    "set-custom-name")
+        write_config "name" "$2"
+        ;;
+    "clear-config")
+        rm "$CONFIG_PATH"
         ;;
     "daemon")
         python3 input-daemon || python3 /usr/share/cec-toolbox/input-daemon
