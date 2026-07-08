@@ -3,7 +3,7 @@
 from evdev import InputDevice, ecodes as e, list_devices
 from evdev import UInput, InputEvent, KeyEvent
 
-from regex import match
+from re import search
 from time import sleep
 
 from mapping import cec_mapping
@@ -15,7 +15,7 @@ def main_loop() -> None:
     cec = None
 
     for device in devices:
-        if match("DP-[0-9]", device.name):
+        if search("DP-[0-9]", device.name):
             cec = device
 
     if not cec:
