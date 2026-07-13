@@ -8,7 +8,7 @@ if [[ -f $CONFIG_PATH ]]; then
     . $CONFIG_PATH
 fi
 CONFIG_PATH="/etc/cec-toolbox.conf"
-EXE="cec-ctl -st0"
+EXE="cec-ctl -st0 --cec-version-1.4"
 COMMAND=$1
 
 configure_playback() {
@@ -25,7 +25,6 @@ get_address() {
         echo "$CUSTOM_ADDRESS"
         return
     fi
-
     get_physical_address
 }
 
@@ -34,18 +33,41 @@ switch_input() {
     $EXE --active-source phys-addr="$1"
 }
 
+switch_to_me() {
+    switch_input "$(get_address)"
+}
+
 get_tv_state() {
     $EXE --give-device-power-status | grep -c "pwr-state: on"
 }
 
 tv_on() {
     configure_playback "$DEVICE_NAME"
-    [[ "$(get_tv_state)" -eq 0 ]] && $EXE --image-view-on
-    switch_input "$(get_address)"
+    if [[ "$(get_tv_state)" -eq 0 ]]; then
+        $EXE --image-view-on
+        # sleep 2s
+    fi
+
+    switch_to_me
+    sleep 10s
+    switch_to_me
 }
 
 tv_off() {
     configure_playback "$DEVICE_NAME"
+
+    local physical
+    local logical
+
+    physical=$(get_physical_address)
+    logical=$(get_address)
+
+    # switch to physical CEC input before trying to switch off the tv
+    if [[ physical != "$logical" ]]; then
+        switch_input "$physical"
+        sleep 1s
+    fi
+
     [[ "$(get_tv_state)" -ne 0 ]] && $EXE --standby
 }
 
@@ -65,18 +87,19 @@ write_config() {
     echo "DEVICE_NAME=$DEVICE_NAME" >> "$CONFIG_PATH"
 }
 
+
 case "$COMMAND" in
     "on")
-        tv_on
+        tv_on > /dev/null
         ;;
     "off")
-        tv_off
+        tv_off > /dev/null
         ;;
     "poweroff")
-        poweroff
+        poweroff > /dev/null
         ;;
     "input")
-        switch_input "${2}.0.0.0"
+        switch_input "${2}.0.0.0" > /dev/null
         ;;
     "get-input")
         get_physical_address | cut -d "." -f 1
@@ -88,11 +111,11 @@ case "$COMMAND" in
         get_physical_address
         ;;
     "configure")
-        configure_playback "$DEVICE_NAME"
+        configure_playback "$DEVICE_NAME" > /dev/null
         ;;
     "notice-me")
-        configure_playback "$DEVICE_NAME"
-        switch_input "$(get_address)"
+        configure_playback "$DEVICE_NAME" > /dev/null
+        switch_to_me > /dev/null
         ;;
     "set-custom-address")
         write_config "address" "$2"
