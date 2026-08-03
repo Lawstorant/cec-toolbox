@@ -7,7 +7,6 @@ if [[ -f $CONFIG_PATH ]]; then
     # shellcheck source=/etc/cec-toolbox.conf
     . $CONFIG_PATH
 fi
-CONFIG_PATH="/etc/cec-toolbox.conf"
 EXE="cec-ctl -st0 --cec-version-1.4"
 COMMAND=$1
 
@@ -87,6 +86,27 @@ write_config() {
     echo "DEVICE_NAME=$DEVICE_NAME" >> "$CONFIG_PATH"
 }
 
+usage() {
+	cat <<USAGEEND
+Usage $(basename "$0") ACTION [ARGUMENTS...]
+
+ACTION:
+    on                         Turn the TV on
+    off                        Turn the TV off
+    poweroff                   Turn the TV off when shutting down the PC
+    input <INPUT_ID>           Switch to input <INPUT_ID>
+    get-input                  Print the currently selected device
+    address                    Print the device's address
+    physical-address           Print the device's physical address
+    configure                  Configure the device (Make the TV aware of us)
+    notice-me                  Configure the device and focus it's input
+    set-custom-address <ADDR>  Write the address <ADDR> to the configuration file
+    set-custom-name <NAME>     Write the name <NAME> to the configuration file
+    clear-config               Delete the configuration file
+    daemon                     Start the input daemon
+
+USAGEEND
+}
 
 case "$COMMAND" in
     "on")
@@ -129,7 +149,12 @@ case "$COMMAND" in
     "daemon")
         python3 input-daemon || python3 /usr/share/cec-toolbox/input-daemon
         ;;
+	"help"|"--help"|"-h"|"")
+		usage
+		;;
     *)
         echo "Unknwon command: $COMMAND"
+		usage
+		exit 1
         ;;
 esac
