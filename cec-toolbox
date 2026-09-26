@@ -63,7 +63,7 @@ tv_off() {
     logical=$(get_address)
 
     # switch to physical CEC input before trying to switch off the tv
-    if [[ physical != "$logical" ]]; then
+    if [[ $physical != "$logical" ]]; then
         switch_input "$physical"
         sleep 1s
     fi
